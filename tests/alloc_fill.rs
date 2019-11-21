@@ -1,3 +1,5 @@
+#![feature(allocator_api)]
+
 use bumpalo::Bump;
 use std::alloc::Layout;
 
@@ -17,10 +19,10 @@ fn alloc_slice_fill_zero() {
     b.alloc_slice_fill_clone(0, &"hello".to_string());
     b.alloc_slice_fill_default::<String>(0);
     let ptr2 = b.alloc(MyZeroSizedType);
-    assert_eq!(ptr1.as_ptr() as usize & !7, ptr2 as *mut _ as usize);
+    assert_eq!(ptr1.ptr.as_ptr() as usize & !7, ptr2 as *mut _ as usize);
 
     let ptr3 = b.alloc_layout(layout);
-    assert_eq!(ptr2 as *mut _ as usize, ptr3.as_ptr() as usize + 1);
+    assert_eq!(ptr2 as *mut _ as usize, ptr3.ptr.as_ptr() as usize + 1);
 }
 
 #[test]

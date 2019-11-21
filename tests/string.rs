@@ -1,5 +1,6 @@
-#![cfg(feature = "collections")]
-use bumpalo::{collections::String, format, Bump};
+use alloc_wg::format;
+use alloc_wg::string::String;
+use bumpalo::Bump;
 use std::fmt::Write;
 
 #[test]
@@ -14,6 +15,6 @@ fn format_a_bunch_of_strings() {
 #[test]
 fn trailing_comma_in_format_macro() {
     let b = Bump::new();
-    let v = format![in &b, "{}{}", 1, 2, ];
+    let v = format![in &b, "{}{}", 1, 2];
     assert_eq!(v, "12");
 }

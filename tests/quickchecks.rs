@@ -1,3 +1,5 @@
+#![feature(allocator_api)]
+
 use bumpalo::Bump;
 use quickcheck::{quickcheck, Arbitrary, Gen};
 use std::mem;
@@ -185,7 +187,7 @@ quickcheck! {
 
             for &size in &sizes {
                 let layout = std::alloc::Layout::from_size_align(size, alignment).unwrap();
-                let ptr = b.alloc_layout(layout).as_ptr() as *const u8 as usize;
+                let ptr = b.alloc_layout(layout).ptr.as_ptr() as *const u8 as usize;
                 assert_eq!(ptr % alignment, 0);
             }
 

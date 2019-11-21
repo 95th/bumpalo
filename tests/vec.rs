@@ -1,5 +1,5 @@
-#![cfg(feature = "collections")]
-use bumpalo::{collections::Vec, vec, Bump};
+use alloc_wg::{vec, vec::Vec};
+use bumpalo::Bump;
 use std::cell::Cell;
 
 #[test]
@@ -27,7 +27,7 @@ fn recursive_vecs() {
 
     struct Node<'a> {
         myself: Cell<Option<&'a Node<'a>>>,
-        edges: Cell<Vec<'a, &'a Node<'a>>>,
+        edges: Cell<Vec<&'a Node<'a>, &'a Bump>>,
     }
 
     let node1: &Node = b.alloc(Node {
@@ -40,22 +40,10 @@ fn recursive_vecs() {
     });
 
     node1.myself.set(Some(node1));
-    node1.edges.set(bumpalo::vec![in &b; node1, node1, node2]);
+    node1.edges.set(vec![in &b; node1, node1, node2]);
 
     node2.myself.set(Some(node2));
-    node2.edges.set(bumpalo::vec![in &b; node1, node2]);
-}
-
-#[test]
-fn test_into_bump_slice_mut() {
-    let b = Bump::new();
-    let v = bumpalo::vec![in &b; 1, 2, 3];
-    let slice = v.into_bump_slice_mut();
-
-    slice[0] = 3;
-    slice[2] = 1;
-
-    assert_eq!(slice, [3, 2, 1]);
+    node2.edges.set(vec![in &b; node1, node2]);
 }
 
 quickcheck::quickcheck! {
@@ -64,7 +52,7 @@ quickcheck::quickcheck! {
         // `shrink_to_fit`s.
 
         let b = Bump::new();
-        let mut v = bumpalo::vec![in &b];
+        let mut v = alloc_wg::vec![in &b];
 
         for len in sizes {
             // We don't want to get too big and OOM.

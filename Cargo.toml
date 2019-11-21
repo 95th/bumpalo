@@ -23,13 +23,15 @@ path = "benches/benches.rs"
 harness = false
 required-features = ["collections"]
 
+[dependencies]
+alloc-wg = { git = "https://github.com/TimDiekmann/alloc-wg" }
+
 [dev-dependencies]
 quickcheck = "0.9.0"
 criterion = "0.3.0"
 
 [features]
 default = []
-collections = []
 
 # [profile.bench]
 # debug = true

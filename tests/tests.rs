@@ -1,3 +1,5 @@
+#![feature(allocator_api)]
+
 use bumpalo::Bump;
 use std::alloc::Layout;
 use std::mem;
@@ -188,7 +190,7 @@ fn test_alignment() {
         let layout = std::alloc::Layout::from_size_align(alignment, alignment).unwrap();
 
         for _ in 0..1024 {
-            let ptr = b.alloc_layout(layout).as_ptr();
+            let ptr = b.alloc_layout(layout).ptr.as_ptr();
             assert_eq!(ptr as *const u8 as usize % alignment, 0);
         }
     }
